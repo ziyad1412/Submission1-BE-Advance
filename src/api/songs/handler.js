@@ -10,6 +10,7 @@ class SongsHandler {
     this.deleteSongByIdHandler = this.deleteSongByIdHandler.bind(this);
   }
 
+  // Handler add song
   async postSongHandler(request, h) {
     this._validator.validateSongPayload(request.payload);
     const songId = await this._service.addSong(request.payload);
@@ -22,6 +23,7 @@ class SongsHandler {
       .code(201);
   }
 
+  // Handler get songs
   async getSongsHandler(request) {
     const { title, performer } = request.query; // Ambil query parameter
     const songs = await this._service.getSongs({ title, performer }); // Oper ke service
@@ -34,6 +36,7 @@ class SongsHandler {
     };
   }
 
+  // Handler get song by id
   async getSongByIdHandler(request) {
     const { id } = request.params;
     const song = await this._service.getSongById(id);
@@ -41,6 +44,7 @@ class SongsHandler {
     return { status: "success", data: { song } };
   }
 
+  // Handler edit song by id
   async putSongByIdHandler(request) {
     const { id } = request.params;
     this._validator.validateSongPayload(request.payload);
@@ -49,6 +53,7 @@ class SongsHandler {
     return { status: "success", message: "Lagu berhasil diperbarui" };
   }
 
+  // Handler delete song by id
   async deleteSongByIdHandler(request) {
     const { id } = request.params;
     await this._service.deleteSongById(id);
