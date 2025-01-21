@@ -5,6 +5,11 @@ const NotFoundError = require("../../exceptions/NotFoundError");
 class AlbumsService {
   constructor() {
     this._albums = [];
+    this._songsService = null; // SongsService instance to access songs data
+  }
+
+  setSongsService(songsService) {
+    this._songsService = songsService;
   }
 
   addAlbum({ name, year }) {
@@ -31,6 +36,18 @@ class AlbumsService {
       throw new NotFoundError("Album tidak ditemukan");
     }
     return album;
+  }
+
+  getAlbumDetailWithSongs(id) {
+    const album = this.getAlbumById(id);
+
+    if (!this._songsService) {
+      throw new Error("SongsService belum diatur.");
+    }
+
+    const songs = this._songsService.getSongsByAlbumId(id);
+
+    return { ...album, songs };
   }
 
   editAlbumById(id, { name, year }) {

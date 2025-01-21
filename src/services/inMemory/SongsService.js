@@ -21,7 +21,7 @@ class SongsService {
 
     this._songs.push(newSong);
 
-    const isSuccess = this._songs.filter((song) => song.id === id).length > 0;
+    const isSuccess = this._songs.some((song) => song.id === id);
 
     if (!isSuccess) {
       throw new InvariantError("Lagu gagal ditambahkan");
@@ -30,12 +30,38 @@ class SongsService {
     return id;
   }
 
-  getSongs() {
-    return this._songs.map(({ id, title, performer }) => ({
+  getSongs({ title, performer }) {
+    let songs = this._songs;
+
+    if (title) {
+      const lowercasedTitle = title.toLowerCase();
+      songs = songs.filter((song) =>
+        song.title.toLowerCase().includes(lowercasedTitle)
+      );
+    }
+
+    if (performer) {
+      const lowercasedPerformer = performer.toLowerCase();
+      songs = songs.filter((song) =>
+        song.performer.toLowerCase().includes(lowercasedPerformer)
+      );
+    }
+
+    return songs.map(({ id, title, performer }) => ({
       id,
       title,
       performer,
     }));
+  }
+
+  getSongsByAlbumId(albumId) {
+    return this._songs
+      .filter((song) => song.albumId === albumId)
+      .map(({ id, title, performer }) => ({
+        id,
+        title,
+        performer,
+      }));
   }
 
   getSongById(id) {
